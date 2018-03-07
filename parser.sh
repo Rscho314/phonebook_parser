@@ -36,8 +36,11 @@ table3="$(sed -E "s/(_)([A-Z] [A-Z][a-z-]+)/ \2/g" parsed_phonebook.txt)"
 echo "$table3" > parsed_phonebook.txt
 
 # dash between surname parts
-table4="$(sed -E "s/( [A-Z][a-z-]+\b)( )/\1-/g" parsed_phonebook.txt)"
+table4="$(sed -E "s/( [A-Z][a-z-]+)( )/\1-/g" parsed_phonebook.txt)"
 echo "$table4" > parsed_phonebook.txt
+table4a="$(sed -E "s/( [A-Z][a-z]+-[A-Z][a-z]+)( )/\1-/g" parsed_phonebook.txt)"
+echo "$table4a" > parsed_phonebook.txt
+
 
 # dash between intial and surname
 table5="$(sed -E "s/(\b[A-Z])( )([A-Z][a-z-]+\b)/\1-\3/g" parsed_phonebook.txt)"
@@ -56,7 +59,7 @@ table9="$(sed -E 's/^Prof\b/I P/' parsed_phonebook.txt)"
 echo "$table9" > parsed_phonebook.txt
 
 #replace surnames by initials
-table10="$(sed -E 's/([A-Z])[a-z]+$/\1/' parsed_phonebook.txt)"
+table10="$(sed -E 's/\b([A-Z])[a-z]+/\1/g' parsed_phonebook.txt)"
 echo "$table10" > parsed_phonebook.txt
 table11="$(sed -E 's/\b([A-Z])[a-z]+-([A-Z])$/\1\2/' parsed_phonebook.txt)"
 echo "$table11" > parsed_phonebook.txt
@@ -66,15 +69,14 @@ table12="$(sed -E 's/ /\,/g' parsed_phonebook.txt)"
 echo "$table12" > parsed_phonebook.txt
 table13="$(sed -E 's/_/ /g' parsed_phonebook.txt)"
 echo "$table13" > parsed_phonebook.txt
-table14="$(sed -E 's/([A-Z])-([A-Z])$/\1\2/g' parsed_phonebook.txt)"
+table14="$(awk -F ',' '{gsub(/-/,"", $4); gsub(/KP D/,"K", $4); print}' OFS=',' parsed_phonebook.txt)"
 echo "$table14" > parsed_phonebook.txt
-table15="$(sed -E 's/(,[A-Z])$/\1\1/g' parsed_phonebook.txt)"
-echo "$table15" > parsed_phonebook.txt
-table16="$(sed -E 's/([A-Z])([A-Z])$/\1\2\,\1/g' parsed_phonebook.txt)"
-echo "$table16" > parsed_phonebook.txt
+#table15="$(sed -E 's/(,[A-Z])$/\1\1/g' parsed_phonebook.txt)"
+#echo "$table15" > parsed_phonebook.txt
+#table16="$(sed -E 's/([A-Z])([A-Z])$/\1\2\,\1/g' parsed_phonebook.txt)"
+#echo "$table16" > parsed_phonebook.txt
 
-# in a shell:
-# sqlite3 phonebook.db
-# .mode csv
-# create table drs(sex CHAR, status CHAR, name TEXT, initials TEXT, initial_first CHAR);
-# .import parsed_phonebook.txt drs
+echo -e ".mode csv\ncreate table subjects(sex CHAR, status CHAR, name TEXT, initials TEXT);\n.import parsed_phonebook.txt subjects" | sqlite3 phonebook.db
+
+echo "The above error is due to a malformed record. The info is correct, only the dropped extra is malformed."
+echo "Done."
