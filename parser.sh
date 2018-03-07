@@ -61,14 +61,20 @@ echo "$table10" > parsed_phonebook.txt
 table11="$(sed -E 's/\b([A-Z])[a-z]+-([A-Z])$/\1\2/' parsed_phonebook.txt)"
 echo "$table11" > parsed_phonebook.txt
 
-# replace spaces by slashes and underscores by spaces, then decompose initials
-table12="$(sed -E 's/ /\//g' parsed_phonebook.txt)"
+# replace spaces by commas and underscores by spaces, then decompose initials
+table12="$(sed -E 's/ /\,/g' parsed_phonebook.txt)"
 echo "$table12" > parsed_phonebook.txt
 table13="$(sed -E 's/_/ /g' parsed_phonebook.txt)"
 echo "$table13" > parsed_phonebook.txt
 table14="$(sed -E 's/([A-Z])-([A-Z])$/\1\2/g' parsed_phonebook.txt)"
 echo "$table14" > parsed_phonebook.txt
-table15="$(sed -E 's/([A-Z])([A-Z])$/\1\2\/\1/g' parsed_phonebook.txt)"
+table15="$(sed -E 's/(,[A-Z])$/\1\1/g' parsed_phonebook.txt)"
 echo "$table15" > parsed_phonebook.txt
+table16="$(sed -E 's/([A-Z])([A-Z])$/\1\2\,\1/g' parsed_phonebook.txt)"
+echo "$table16" > parsed_phonebook.txt
 
-
+# in a shell:
+# sqlite3 phonebook.db
+# .mode csv
+# create table drs(sex CHAR, status CHAR, name TEXT, initials TEXT, initial_first CHAR);
+# .import parsed_phonebook.txt drs
