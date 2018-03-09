@@ -69,14 +69,13 @@ table12="$(sed -E 's/ /\,/g' parsed_phonebook.txt)"
 echo "$table12" > parsed_phonebook.txt
 table13="$(sed -E 's/_/ /g' parsed_phonebook.txt)"
 echo "$table13" > parsed_phonebook.txt
-table14="$(awk -F ',' '{gsub(/-/,"", $4); gsub(/KP D/,"K", $4); print}' OFS=',' parsed_phonebook.txt)"
+table14="$(awk -F ',' '{gsub(/-/,"", $4); gsub(/KP D/,"K", $4); print}' OFS=',' parsed_phonebook.txt | uniq)"
 echo "$table14" > parsed_phonebook.txt
 #table15="$(sed -E 's/(,[A-Z])$/\1\1/g' parsed_phonebook.txt)"
 #echo "$table15" > parsed_phonebook.txt
 #table16="$(sed -E 's/([A-Z])([A-Z])$/\1\2\,\1/g' parsed_phonebook.txt)"
 #echo "$table16" > parsed_phonebook.txt
 
-echo -e ".mode csv\ncreate table subjects(sex CHAR, status CHAR, name TEXT, initials TEXT);\n.import parsed_phonebook.txt subjects" | sqlite3 phonebook.db
-
-echo "The above error is due to a malformed record. The info is correct, only the dropped extra is malformed."
+sqlite3 phonebook.db < sqlite_commands.txt 
+echo "The above error is due to a malformed record. The info is correct, only the dropped extra is malformed. Also, some duplicates (~10) exist with only initials"
 echo "Done."

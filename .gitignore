@@ -1,4 +1,5 @@
-*.txt
+annuaire_mois_en_cours.txt
+parsed_phonebook.txt
 *.db
 *.*~
 *.pdf

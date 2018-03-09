@@ -1,0 +1,6 @@
+CREATE TABLE subjects (id INTEGER PRIMARY KEY, sex TEXT, status TEXT, name TEXT, initials TEXT);
+.mode csv
+CREATE TABLE temp (sex TEXT NOT NULL, status TEXT NOT NULL, name TEXT NOT NULL, initials TEXT NOT NULL);
+.import parsed_phonebook.txt temp
+INSERT INTO subjects(sex, status, name, initials) SELECT sex, status, name, initials FROM temp;
+DROP TABLE temp;
