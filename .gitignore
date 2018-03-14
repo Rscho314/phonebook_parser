@@ -1,5 +1,8 @@
 annuaire_mois_en_cours.txt
 parsed_phonebook.txt
+access_card.py
+__pycache__/
+*.log
 *.db
 *.*~
 *.pdf
